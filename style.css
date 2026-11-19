@@ -31,22 +31,29 @@ b { font-weight: 700; }
 button, input { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
-/* ---------- layout: one screen on desktop ---------- */
-.page {
+/* ---------- layout: the specimen fills the first screen, experience below ---------- */
+.top {
   display: grid;
-  grid-template-columns: minmax(280px, 26%) minmax(0, 20%) minmax(0, 1fr) minmax(260px, 300px);
+  grid-template-columns: minmax(280px, 25%) minmax(0, 1fr) minmax(270px, 310px);
   grid-template-rows: minmax(0, 1fr) auto;
-  grid-template-areas: "hero stage stage side" "work work panel panel";
+  grid-template-areas: "hero stage side" "hero panel side";
   gap: 18px 32px;
-  height: 100svh; min-height: 760px;
+  height: 100svh; min-height: 720px;
   padding: 26px 40px 24px;
 }
-.hero { grid-area: hero; align-self: start; position: relative; z-index: 2; pointer-events: none; }
+.hero { grid-area: hero; align-self: stretch; position: relative; z-index: 2; pointer-events: none; display: flex; flex-direction: column; }
 .hero a, .hero p { pointer-events: auto; }
-.stage { grid-area: stage; position: relative; min-height: 380px; margin-left: -22%; margin-right: -2%; }
-.side { grid-area: side; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.work { grid-area: work; align-self: end; }
-.panel { grid-area: panel; align-self: end; justify-self: end; width: min(100%, 720px); }
+.hero .more { margin-top: auto; text-decoration: none; color: var(--mute); }
+.hero .more:hover { color: var(--ink); }
+.stage { grid-area: stage; position: relative; min-height: 380px; margin-left: -30%; margin-right: -2%; }
+.side { grid-area: side; display: flex; flex-direction: column; gap: 9px; min-width: 0; }
+.panel { grid-area: panel; align-self: end; width: 100%; max-width: 760px; justify-self: center; }
+
+.cv { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 32px 56px; padding: 56px 40px 40px; border-top: 1px solid var(--rule); }
+.cv .label { display: block; padding-bottom: 8px; border-bottom: 1px solid var(--rule); margin-bottom: 2px; }
+.cv .awards-label { margin-top: 28px; border-bottom: 0; }
+.foot { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 22px 40px 30px; color: var(--mute); border-top: 1px solid var(--rule); }
+.foot a { text-decoration: none; } .foot a:hover { color: var(--ink); }
 
 /* ---------- hero ---------- */
 .eyebrow { font: 600 11px/1 var(--sans); letter-spacing: .06em; color: var(--mute); margin-bottom: 14px; }
@@ -67,10 +74,8 @@ h1 .indent { padding-left: 1.1em; }
 .hint.gone { opacity: 0; }
 
 /* ---------- work list ---------- */
-.work .label { display: block; padding-bottom: 8px; border-bottom: 1px solid var(--rule); margin-bottom: 4px; }
-.work .label:not(:first-child) { margin-top: 12px; }
-.item { display: grid; grid-template-columns: 28px 1fr; gap: 14px; padding: 9px 0; border-bottom: 1px solid var(--rule); }
-.item img { width: 28px; height: 28px; object-fit: contain; border-radius: 4px; background: #fff; }
+.item { display: grid; grid-template-columns: 30px 1fr; gap: 14px; padding: 13px 0; border-bottom: 1px solid var(--rule); }
+.mark { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid var(--box-line); background: var(--box); font-size: 10.5px; color: var(--ink); }
 .item h3 { font-weight: 400; font-style: italic; font-size: 17px; display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
 .item .date { font: 400 10px var(--sans); letter-spacing: .06em; color: var(--mute); font-style: normal; }
 .item p { font-size: 13.5px; color: var(--ink); opacity: .85; margin-top: 2px; }
@@ -80,15 +85,15 @@ h1 .indent { padding-left: 1.1em; }
 .social a { width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid var(--box-line); background: var(--box); }
 .social svg { width: 13px; height: 13px; fill: currentColor; }
 .side > .label { margin-top: 4px; }
-.card { border: 1px solid var(--box-line); background: var(--box); padding: 7px; display: grid; grid-template-columns: 88px 1fr; gap: 10px; }
+.card { border: 1px solid var(--box-line); background: var(--box); padding: 6px; display: grid; grid-template-columns: 74px 1fr; gap: 10px; }
 .card .media { display: block; position: relative; width: 100%; aspect-ratio: 1; background: #000; overflow: hidden; border: 0; cursor: pointer; padding: 0; align-self: start; }
-.card video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card video, .card img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .card .play { position: absolute; left: 5px; bottom: 4px; color: #fff; opacity: 0; transition: opacity .2s; text-shadow: 0 1px 3px #000; font-size: 9px; }
 .card .media:hover .play, .card .media:focus-visible .play { opacity: 1; }
 .card-body { padding: 0; min-width: 0; }
 .card h3 { font-weight: 400; font-style: italic; font-size: 16px; line-height: 1.2; display: flex; justify-content: space-between; }
 .card .arrow { text-decoration: none; color: var(--mute); font-style: normal; font-size: 13px; }
-.card p { font-size: 12px; line-height: 1.35; margin-top: 2px; }
+.card p { font-size: 11.5px; line-height: 1.32; margin-top: 2px; }
 .card .tags { font: 600 9px var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--mute); margin-top: 4px; }
 .awards { list-style: none; border: 1px solid var(--box-line); background: var(--box); padding: 0 10px; }
 .awards li { padding: 8px 0; border-bottom: 1px solid var(--rule); }
@@ -135,11 +140,14 @@ dialog .close { position: absolute; top: -30px; right: 0; background: none; bord
 
 /* ---------- smaller screens: stack ---------- */
 @media (max-width: 1100px) {
-  .page { grid-template-columns: 1fr; grid-template-areas: "hero" "stage" "panel" "work" "side"; grid-template-rows: none; height: auto; min-height: 0; padding: 22px 16px 32px; gap: 22px; }
+  .top { grid-template-columns: 1fr; grid-template-areas: "hero" "stage" "panel" "side"; grid-template-rows: none; height: auto; min-height: 0; padding: 22px 16px 32px; gap: 22px; }
   .stage { height: 62svh; min-height: 340px; margin: 0 -16px; }
-  .panel { justify-self: stretch; width: 100%; }
+  .panel { justify-self: stretch; max-width: none; }
   .side .social { justify-content: flex-start; order: -1; }
   .hero { pointer-events: auto; }
+  .hero .more { display: none; }
+  .cv { grid-template-columns: 1fr; padding: 36px 16px 24px; gap: 28px; }
+  .foot { padding: 20px 16px 28px; }
 }
 @media (max-width: 640px) {
   .cols { grid-template-columns: 1fr; gap: 12px; }

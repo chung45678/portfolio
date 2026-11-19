@@ -390,7 +390,8 @@ if (REDUCED) { S.autoRotate = false; $("t-rotate").checked = false; }
     S.home.pos.set(Math.sin(az) * Math.cos(el), Math.sin(el), Math.cos(az) * Math.cos(el)).multiplyScalar(d);
     camera.position.copy(S.home.pos);
   }
-  if (q.size) { S.autoRotate = false; $("t-rotate").checked = false; }
+  const KEYS = ["e", "pass", "load", "labels", "mesh", "dark", "az", "el"];   // other hashes (#cv) are page anchors
+  if ([...q.keys()].some((k) => KEYS.includes(k))) { S.autoRotate = false; $("t-rotate").checked = false; }
 }
 
 function resetView() {

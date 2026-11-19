@@ -1,6 +1,6 @@
-# aidenzeng.ca v2: laptop specimen
+# Chung He — portfolio
 
-A static site with no build step: upload this whole folder. It has the same layout and text as the live site, but the jelly specimen is replaced by the laptop from the Object Strobe film.
+Live at https://chung45678.github.io/portfolio/ (GitHub Pages, from `main`). A static site with no build step. The first screen is an interactive 3D specimen: the laptop from my Object Strobe film. Experience, outside-of-work and awards follow below it.
 
 ## The specimen
 - **Hover** over the laptop to take it apart in the film's order (shells, then core, then small parts). It goes back together in reverse when the pointer leaves.
@@ -30,9 +30,10 @@ index.html#e=1&pass=thermal&load=1.1&labels=1&az=40&el=-30&dark=1
 | `media/` | The Object Strobe film (720p loop for the card, 1080p with sound for the lightbox) and the poster. |
 | `fonts/` | Fira Mono under the SIL OFL. Serif and sans use the same system font stacks as the live site. |
 
-## Before deploying
-- **Hotlinked assets.** The logos and the Sideline video and poster load from `https://www.aidenzeng.ca/assets/...`. If this replaces that site and those files stay at the same paths, nothing changes. Otherwise, copy `assets/` next to `index.html` and change the URLs to `./assets/...`.
-- **CDN.** three.js 0.169.0 and its Draco decoder load from jsdelivr.
+## Editing
+- **Text:** all content is in `index.html`.
+- **Project thumbnails:** `media/projects/` (240×240 squares, made from each repo's `docs/` screenshots).
+- **CDN:** three.js 0.169.0 and its Draco decoder load from jsdelivr.
 
 ## Rebuild the model
 The model comes from the Object Strobe film project, not from this repo. There, run:
