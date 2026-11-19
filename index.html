@@ -8,6 +8,10 @@
 <meta property="og:title" content="Chung He">
 <meta property="og:description" content="Management Engineering @ Waterloo. Product, design and code.">
 <meta property="og:image" content="media/still_clean.jpg">
+<meta name="theme-color" content="#0a0a0b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="preload" href="models/laptop.glb" as="fetch" crossorigin>
 <script type="importmap">
@@ -18,177 +22,138 @@
 </script>
 </head>
 <body>
-<div class="top">
 
-  <section class="hero">
-    <p class="eyebrow">Hey! I’m</p>
-    <h1><span>Chung</span><span class="indent">He.</span></h1>
-    <p class="bio">Management Engineering student at the University of Waterloo, building at the intersection of product, design and code. Looking for product, design and strategy co-op roles. Reach me at <a href="mailto:hechung128@gmail.com">hechung128@gmail.com</a></p>
-    <a class="more label" href="#cv">Experience ↓</a>
+<!-- the 3D layer: fixed behind everything, still interactive wherever there is no text -->
+<canvas id="gl" aria-label="Interactive 3D laptop. Hover to take it apart, drag to turn it."></canvas>
+<canvas id="hud" aria-hidden="true"></canvas>
+<div class="loader mono" id="loader"><i><b id="bar"></b></i><span>WARMING UP THE SPECIMEN</span></div>
+
+<nav class="pill" aria-label="Sections">
+  <a href="#top" class="brand">CHUNG HE</a>
+  <a href="#work">Work</a>
+  <a href="#experience">Experience</a>
+  <a href="#about">About</a>
+  <a href="mailto:hechung128@gmail.com" class="cta">Email me</a>
+</nav>
+
+<main>
+  <!-- data-cam: azimuth°, elevation°, size (fraction of the short side), x offset (−0.5..0.5), explode 0..1, load 0..1.12 -->
+  <section class="hero sec" id="top" data-cam="32,14,0.62,0.12,0,0">
+    <div class="tele tl mono"><span id="t-pass">PASS SOLID · Tj 34.0°C</span><span id="t-cam">CAMERA 032° / 14°</span></div>
+    <div class="side-l mono">MANAGEMENT ENGINEERING<br>UNIVERSITY OF WATERLOO</div>
+    <div class="side-r mono">PRODUCT · DESIGN<br>CODE · STRATEGY</div>
+    <div class="hero-copy">
+      <h1>Chung He</h1>
+      <p class="lede">Management Engineering student at the University of Waterloo, building at the intersection of product, design and code. Looking for product, design and strategy co-op roles.</p>
+      <p class="actions"><a class="btn" href="mailto:hechung128@gmail.com">hechung128@gmail.com <span>→</span></a><a class="btn ghost" href="https://github.com/chung45678">GitHub <span>↗</span></a></p>
+    </div>
+    <p class="scroll-cue mono">SCROLL TO INSPECT</p>
   </section>
 
-  <section class="stage" aria-label="Interactive 3D laptop. Hover to take it apart, drag to rotate, scroll to zoom.">
-    <canvas id="gl"></canvas>
-    <canvas id="hud" aria-hidden="true"></canvas>
-    <p class="loader mono" id="loader">LOADING SPECIMEN <span id="pct">0</span>%</p>
-    <img class="fallback" id="fallback" src="media/still_clean.jpg" alt="The laptop specimen" hidden>
-    <p class="hint mono" id="hint">hover to open · drag to turn · scroll to zoom</p>
-  </section>
-
-  <aside class="side">
-    <nav class="social" aria-label="Links">
-      <a href="https://github.com/chung45678" aria-label="GitHub"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg></a>
-      <a href="mailto:hechung128@gmail.com" aria-label="Email hechung128@gmail.com"><svg viewBox="0 0 24 24"><path d="M3 5h18v14H3zm2 2v.4l7 4.6 7-4.6V7zm14 2.8-7 4.6-7-4.6V17h14z"/></svg></a>
-    </nav>
-
-    <h2 class="label">Projects</h2>
-    <article class="card">
-      <button class="media" id="strobe-open" type="button" aria-label="Play the Object Strobe film with sound">
-        <video src="media/laptop_strobe_720.mp4" poster="media/card_poster.jpg" muted loop playsinline autoplay preload="metadata"></video>
-      </button>
-      <div class="card-body">
-        <h3>Object Strobe <a href="#" class="arrow" id="strobe-open-2" aria-label="Play the film">↗</a></h3>
-        <p>A product film built entirely in code. The laptop on this page comes apart, overheats and recovers in 9.6 s.</p>
-        <p class="tags">Blender · numpy · three.js</p>
-      </div>
-    </article>
-    <article class="card">
-      <a class="media" href="https://pairwise-five-lake.vercel.app" aria-label="Open Pairwise"><img src="media/projects/pairwise.jpg" alt="Pairwise match list for a club mixer" loading="lazy"></a>
-      <div class="card-body">
-        <h3>Pairwise <a href="https://pairwise-five-lake.vercel.app" class="arrow" aria-label="Open Pairwise">↗</a></h3>
-        <p>Open-source event matchmaker for student clubs: who to meet, why, and how to open the conversation.</p>
-        <p class="tags">FastAPI · React · Tailwind</p>
-      </div>
-    </article>
-    <article class="card">
-      <a class="media" href="https://claude.ai/artifact/WwWcRmjAibCJ5ETSc1mbR7" aria-label="Open the Leaky demo">
-        <video src="media/projects/leaky.mp4" poster="media/projects/leaky.jpg" muted loop playsinline autoplay preload="metadata"></video>
-      </a>
-      <div class="card-body">
-        <h3>Leaky <a href="https://claude.ai/artifact/WwWcRmjAibCJ5ETSc1mbR7" class="arrow" aria-label="Open the Leaky demo">↗</a></h3>
-        <p>Drop in a bank CSV; it finds every recurring charge, price hike and converted trial, all in the browser.</p>
-        <p class="tags">React · TypeScript · Vitest</p>
-      </div>
-    </article>
-    <article class="card">
-      <a class="media" href="https://shift-triage-lab.robustoatcake2.chatgpt.site" aria-label="Open Shift Triage"><img src="media/projects/shift-triage.jpg" alt="Shift Triage dispatch staffing screen" loading="lazy"></a>
-      <div class="card-body">
-        <h3>Shift Triage <a href="https://shift-triage-lab.robustoatcake2.chatgpt.site" class="arrow" aria-label="Open Shift Triage">↗</a></h3>
-        <p>Staffing for food-bank coordinators: when someone calls out, it re-plans critical roles within the labour budget.</p>
-        <p class="tags">React · TypeScript · Vite</p>
-      </div>
-    </article>
-  </aside>
-
-  <section class="panel" aria-label="Specimen controls">
-    <header><span class="label">The specimen</span><span class="fig">fig. 38</span></header>
-    <div class="cols">
-      <fieldset class="col pass">
-        <legend class="label">Pass</legend>
-        <div class="swatches" role="radiogroup" aria-label="Render pass">
-          <button type="button" role="radio" aria-checked="true" data-pass="solid"><i class="sw sw-solid"></i>Solid</button>
-          <button type="button" role="radio" aria-checked="false" data-pass="glass"><i class="sw sw-glass"></i>Glass</button>
-          <button type="button" role="radio" aria-checked="false" data-pass="thermal"><i class="sw sw-thermal"></i>Thermal</button>
-        </div>
-      </fieldset>
-      <div class="col sliders">
-        <label class="slider"><span class="label">Explode</span><output id="exv" class="mono">0.00</output>
-          <input type="range" id="explode" min="0" max="1" step="0.01" value="0" aria-label="Explode">
-          <span class="ends"><i>assembled</i><i>apart</i></span></label>
-        <label class="slider"><span class="label">Load</span><output id="ldv" class="mono">34.0°C</output>
-          <input type="range" id="load" min="0" max="1.12" step="0.01" value="0" aria-label="Load">
-          <span class="ends"><i>idle</i><i>limit</i></span></label>
-      </div>
-      <div class="col buttons">
-        <div class="row3">
-          <button type="button" id="b-explode">Explode</button>
-          <button type="button" id="b-strobe">Strobe</button>
-          <button type="button" id="b-reset">Reset</button>
-        </div>
-        <div class="checks">
-          <label><input type="checkbox" id="t-rotate" checked> Auto-rotate</label>
-          <label><input type="checkbox" id="t-mesh"> Show mesh</label>
-          <label><input type="checkbox" id="t-labels"> Labels</label>
-        </div>
-        <div class="row2">
-          <button type="button" id="b-pause">Pause</button>
-          <button type="button" id="b-lights">Lights out</button>
-        </div>
+  <section class="sec right-3d" id="work" data-cam="-48,22,0.66,0.24,1,0.35">
+    <div class="block">
+      <p class="eyebrow mono"><span>01 / 04 · Projects</span></p>
+      <h2>Things I’ve built.</h2>
+      <div class="cards">
+        <article class="card">
+          <button class="media" id="strobe-open" type="button" aria-label="Play the Object Strobe film with sound">
+            <video src="media/laptop_strobe_720.mp4" poster="media/card_poster.jpg" muted loop playsinline autoplay preload="metadata"></video>
+          </button>
+          <div>
+            <h3>Object Strobe <a href="#" class="arrow" id="strobe-open-2" aria-label="Play the film">↗</a></h3>
+            <p>A product film built entirely in code. The laptop behind this page comes apart, overheats and recovers in 9.6 s.</p>
+            <p class="tags mono">Blender · numpy · three.js</p>
+          </div>
+        </article>
+        <article class="card">
+          <a class="media" href="https://pairwise-five-lake.vercel.app" aria-label="Open Pairwise"><img src="media/projects/pairwise.jpg" alt="Pairwise match list for a club mixer" loading="lazy"></a>
+          <div>
+            <h3>Pairwise <a href="https://pairwise-five-lake.vercel.app" class="arrow" aria-label="Open Pairwise">↗</a></h3>
+            <p>Open-source event matchmaker for student clubs: who to meet, why, and how to open the conversation.</p>
+            <p class="tags mono">FastAPI · React · Tailwind</p>
+          </div>
+        </article>
+        <article class="card">
+          <a class="media" href="https://claude.ai/artifact/WwWcRmjAibCJ5ETSc1mbR7" aria-label="Open the Leaky demo">
+            <video src="media/projects/leaky.mp4" poster="media/projects/leaky.jpg" muted loop playsinline autoplay preload="metadata"></video>
+          </a>
+          <div>
+            <h3>Leaky <a href="https://claude.ai/artifact/WwWcRmjAibCJ5ETSc1mbR7" class="arrow" aria-label="Open the Leaky demo">↗</a></h3>
+            <p>Drop in a bank CSV; it finds every recurring charge, price hike and converted trial, all in the browser.</p>
+            <p class="tags mono">React · TypeScript · Vitest</p>
+          </div>
+        </article>
+        <article class="card">
+          <a class="media" href="https://shift-triage-lab.robustoatcake2.chatgpt.site" aria-label="Open Shift Triage"><img src="media/projects/shift-triage.jpg" alt="Shift Triage dispatch staffing screen" loading="lazy"></a>
+          <div>
+            <h3>Shift Triage <a href="https://shift-triage-lab.robustoatcake2.chatgpt.site" class="arrow" aria-label="Open Shift Triage">↗</a></h3>
+            <p>Staffing for food-bank coordinators: when someone calls out, it re-plans critical roles within the labour budget.</p>
+            <p class="tags mono">React · TypeScript · Vite</p>
+          </div>
+        </article>
       </div>
     </div>
   </section>
-</div>
 
-<main class="cv" id="cv">
-  <section class="work">
-    <h2 class="label">Experience</h2>
-    <article class="item">
-      <span class="mark mono" aria-hidden="true">SC</span>
-      <div>
-        <h3>Product &amp; Strategy Intern @ Social Closet <span class="date">2026</span></h3>
-        <p>Redesigned the app’s onboarding flow in Figma, added a progress indicator system and fixed UI inconsistencies across screens.</p>
-      </div>
-    </article>
-    <article class="item">
-      <span class="mark mono" aria-hidden="true">BP</span>
-      <div>
-        <h3>VP Culture @ UW Blueprint <span class="date">2026–present</span></h3>
-        <p>Runs culture and member experience for Waterloo’s tech-for-nonprofits club.</p>
-      </div>
-    </article>
-    <article class="item">
-      <span class="mark mono" aria-hidden="true">PM</span>
-      <div>
-        <h3>Events Director @ UW Product Management <span class="date">2026–present</span></h3>
-        <p>Plans and runs events for the club. This is the work Pairwise grew out of.</p>
-      </div>
-    </article>
-    <article class="item">
-      <span class="mark mono" aria-hidden="true">DE</span>
-      <div>
-        <h3>Co-President @ DECA <span class="date">2024–2026</span></h3>
-        <p>Grew the chapter from ~30 to <b>80 members</b> and qualified for <b>ICDC</b>.</p>
-      </div>
-    </article>
-    <article class="item">
-      <span class="mark mono" aria-hidden="true">AQ</span>
-      <div>
-        <h3>President @ Aquatikey (Junior Achievement) <span class="date">2024–2025</span></h3>
-        <p>Ran a company making recycled-filament keychains modeled on Canadian marine species. Sold <b>100+ units</b>, gave part of the revenue to charity and was nominated <b>President of the Year</b>.</p>
-      </div>
-    </article>
+  <section class="sec left-3d" id="experience" data-cam="88,6,0.6,-0.24,0,0.8">
+    <div class="block">
+      <p class="eyebrow mono"><span>02 / 04 · Experience</span></p>
+      <h2>Where I’ve worked.</h2>
+      <ol class="rows">
+        <li><div><h3>Product &amp; Strategy Intern</h3><p class="org mono">Social Closet</p><p>Redesigned the app’s onboarding flow in Figma, added a progress indicator system and fixed UI inconsistencies across screens.</p></div><span class="date mono">2026</span></li>
+        <li><div><h3>VP Culture</h3><p class="org mono">UW Blueprint</p><p>Runs culture and member experience for Waterloo’s tech-for-nonprofits club.</p></div><span class="date mono">2026–now</span></li>
+        <li><div><h3>Events Director</h3><p class="org mono">UW Product Management</p><p>Plans and runs events for the club. This is the work Pairwise grew out of.</p></div><span class="date mono">2026–now</span></li>
+        <li><div><h3>Co-President</h3><p class="org mono">DECA</p><p>Grew the chapter from ~30 to <b>80 members</b> and qualified for <b>ICDC</b>.</p></div><span class="date mono">2024–2026</span></li>
+        <li><div><h3>President</h3><p class="org mono">Aquatikey · Junior Achievement</p><p>Ran a company making recycled-filament keychains modeled on Canadian marine species. Sold <b>100+ units</b>, gave part of the revenue to charity and was nominated <b>President of the Year</b>.</p></div><span class="date mono">2024–2025</span></li>
+      </ol>
+    </div>
   </section>
 
-  <section class="outside">
-    <h2 class="label">Outside of work</h2>
-    <article class="item">
-      <span class="mark mono" aria-hidden="true">♪</span>
-      <div>
-        <h3>Pianist and piano teacher <span class="date">13 years</span></h3>
-        <p>ARCT-level training, won an <b>international competition</b>, and now teaches at a music hall.</p>
+  <section class="sec right-3d" id="about" data-cam="-150,38,0.6,0.24,0.45,1.08">
+    <div class="block">
+      <p class="eyebrow mono"><span>03 / 04 · Outside of work</span></p>
+      <h2>Off the clock.</h2>
+      <div class="stats">
+        <div><b>13</b><span class="mono">years of piano</span></div>
+        <div><b>ARCT</b><span class="mono">level training</span></div>
+        <div><b>3</b><span class="mono">varsity baseball seasons</span></div>
       </div>
-    </article>
-    <article class="item">
-      <span class="mark mono" aria-hidden="true">⚾</span>
-      <div>
-        <h3>Varsity baseball <span class="date">3 years</span></h3>
-        <p>Played three seasons and helped younger players fit into the team.</p>
-      </div>
-    </article>
+      <ol class="rows">
+        <li><div><h3>Pianist and piano teacher</h3><p>ARCT-level training, won an <b>international competition</b>, and now teaches at a music hall.</p></div><span class="date mono">13 yrs</span></li>
+        <li><div><h3>Varsity baseball</h3><p>Played three seasons and helped younger players fit into the team.</p></div><span class="date mono">3 yrs</span></li>
+      </ol>
+      <p class="eyebrow mono sub"><span>Awards</span></p>
+      <ul class="awards">
+        <li><b>International Piano Competition Winner</b><span class="mono">ARCT level</span></li>
+        <li><b>DECA ICDC Qualifier</b><span class="mono">DECA</span></li>
+        <li><b>JA President of the Year Nominee</b><span class="mono">Aquatikey</span></li>
+      </ul>
+    </div>
+  </section>
 
-    <h2 class="label awards-label">Awards</h2>
-    <ul class="awards">
-      <li><b>International Piano Competition Winner</b><span>ARCT level</span></li>
-      <li><b>DECA ICDC Qualifier</b></li>
-      <li><b>JA President of the Year Nominee</b><span>Aquatikey</span></li>
-    </ul>
+  <section class="sec contact" id="contact" data-cam="210,10,0.5,0,0,0.2">
+    <div class="block">
+      <p class="eyebrow mono"><span>04 / 04 · Contact</span></p>
+      <h2 class="huge">Let’s talk.</h2>
+      <p class="lede">Open to product, design and strategy co-op roles.</p>
+      <p class="actions"><a class="btn" href="mailto:hechung128@gmail.com">hechung128@gmail.com <span>→</span></a><a class="btn ghost" href="https://github.com/chung45678">github.com/chung45678 <span>↗</span></a></p>
+    </div>
+    <footer class="foot mono"><span>© 2026 Chung He</span><span>The laptop is the Object Strobe model · drag it, hover it</span></footer>
   </section>
 </main>
 
-<footer class="foot mono">
-  <span>© 2026 Chung He</span>
-  <span><a href="https://github.com/chung45678">github.com/chung45678</a> · <a href="mailto:hechung128@gmail.com">hechung128@gmail.com</a></span>
-</footer>
+<!-- dashboard -->
+<div class="dash" role="group" aria-label="Specimen controls">
+  <span class="mono dlabel">PASS</span>
+  <div class="seg" role="radiogroup" aria-label="Render pass">
+    <button type="button" role="radio" aria-checked="true" data-pass="solid"><i class="sw sw-solid"></i>Solid</button>
+    <button type="button" role="radio" aria-checked="false" data-pass="glass"><i class="sw sw-glass"></i>Glass</button>
+    <button type="button" role="radio" aria-checked="false" data-pass="thermal"><i class="sw sw-thermal"></i>Thermal</button>
+  </div>
+  <span class="div" aria-hidden="true"></span>
+  <button type="button" class="tog" id="b-rotate" aria-pressed="true" title="Auto-rotate">↻<span>Auto-rotate</span></button>
+  <button type="button" class="tog" id="b-pause" aria-pressed="false" title="Pause">❚❚<span>Pause</span></button>
+</div>
 
 <dialog id="film">
   <video id="film-v" src="media/laptop_strobe_1080.mp4" poster="media/poster.jpg" controls loop playsinline preload="none"></video>
