@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aiden Zeng</title>
+<meta name="description" content="Aiden Zeng — Engineering @ University of Waterloo. Looking for full-time and internship roles for 2027.">
+<link rel="stylesheet" href="style.css">
+<link rel="preload" href="models/laptop.glb" as="fetch" crossorigin>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div class="page">
+
+  <section class="hero">
+    <p class="eyebrow">Hey! I’m</p>
+    <h1><span>Aiden</span><span class="indent">Zeng.</span></h1>
+    <p class="bio">Currently studying Engineering @ University of Waterloo. Looking for full-time and internship roles for 2027. Feel free to reach out at <a href="mailto:aidenzeng927@gmail.com">aidenzeng927@gmail.com</a></p>
+  </section>
+
+  <section class="stage" aria-label="Interactive 3D laptop. Hover to take it apart, drag to rotate, scroll to zoom.">
+    <canvas id="gl"></canvas>
+    <canvas id="hud" aria-hidden="true"></canvas>
+    <p class="loader mono" id="loader">LOADING SPECIMEN <span id="pct">0</span>%</p>
+    <img class="fallback" id="fallback" src="media/still_clean.jpg" alt="The laptop specimen" hidden>
+    <p class="hint mono" id="hint">hover to open · drag to turn · scroll to zoom</p>
+  </section>
+
+  <section class="work">
+    <h2 class="label">A few things I’ve done</h2>
+    <article class="item">
+      <img src="https://www.aidenzeng.ca/assets/logos/karat.svg" alt="Karat Financial logo" width="28" height="28">
+      <div>
+        <h3>Growth @ Karat Financial <span class="date">2025–2026</span></h3>
+        <p>Helped grow a community of <b>2,000+ creators</b> reaching <b>50M+ combined followers</b>, contributed to <b>$10M+ in client deposits</b>, and turned cold outreach into <b>50+ signed partnerships</b>.</p>
+      </div>
+    </article>
+    <article class="item">
+      <img src="https://www.aidenzeng.ca/assets/logos/beta-camp-reference.png" alt="BETA Camp logo" width="28" height="28">
+      <div>
+        <h3>Winner @ BETA Camp <span class="date">2025</span></h3>
+        <p>Built Preppin, an AI nutrition coach that reached <b>four figures in revenue</b>, <b>50+ customers</b>, and <b>10,000+ visits during launch week</b> — then won <b>$10,000 in equity-free funding</b>.</p>
+      </div>
+    </article>
+    <h2 class="label">Outside of work</h2>
+    <article class="item">
+      <img src="https://www.aidenzeng.ca/assets/logos/badminton-canada-hq.jpg" alt="Badminton Canada logo" width="28" height="28">
+      <div>
+        <h3>Competed nationally in badminton</h3>
+        <p>Placed <b>3rd at nationals</b>, won <b>2 provincial championships</b>, and spent a few years coaching the next generation.</p>
+      </div>
+    </article>
+  </section>
+
+  <aside class="side">
+    <nav class="social" aria-label="Links">
+      <a href="https://www.linkedin.com/in/aidenzeng/" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.75h4v11H3zM9.5 9.75h3.8v1.5h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1v5.45h-4v-4.83c0-1.15-.02-2.63-1.6-2.63-1.6 0-1.85 1.25-1.85 2.55v4.91h-4z"/></svg></a>
+      <a href="https://github.com/aidenyzeng" aria-label="GitHub"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg></a>
+      <a href="mailto:aidenzeng927@gmail.com" aria-label="Email aidenzeng927@gmail.com"><svg viewBox="0 0 24 24"><path d="M3 5h18v14H3zm2 2v.4l7 4.6 7-4.6V7zm14 2.8-7 4.6-7-4.6V17h14z"/></svg></a>
+    </nav>
+
+    <h2 class="label">Projects</h2>
+    <article class="card">
+      <button class="media" id="strobe-open" type="button" aria-label="Play the Object Strobe film with sound">
+        <video src="media/laptop_strobe_720.mp4" poster="media/card_poster.jpg" muted loop playsinline autoplay preload="metadata"></video>
+        <span class="play mono">PLAY FILM</span>
+      </button>
+      <div class="card-body">
+        <h3>Object Strobe <a href="#" class="arrow" id="strobe-open-2" aria-label="Play the film">↗</a></h3>
+        <p>A product film built entirely in code. This laptop comes apart, overheats and recovers in 9.6 s.</p>
+        <p class="tags">Blender · numpy · OpenCV</p>
+      </div>
+    </article>
+    <article class="card">
+      <a class="media" href="https://youtu.be/yBbAu-VU0r8" aria-label="Watch the Sideline demo on YouTube">
+        <video src="https://www.aidenzeng.ca/assets/projects/sideline.mp4" poster="https://www.aidenzeng.ca/assets/projects/sideline-poster.jpg" muted loop playsinline autoplay preload="metadata"></video>
+        <span class="play mono">WATCH THE DEMO</span>
+      </a>
+      <div class="card-body">
+        <h3>Sideline <a href="https://youtu.be/yBbAu-VU0r8" class="arrow" aria-label="Watch the Sideline demo">↗</a></h3>
+        <p>Sports companion that watches your screen and answers questions about the game in real time.</p>
+        <p class="tags">YOLO · OpenCV</p>
+      </div>
+    </article>
+
+    <h2 class="label">Awards</h2>
+    <ul class="awards">
+      <li><b>1st Place @ KPMG Pitch Competition</b><span>50+ teams</span></li>
+      <li><b>Schulich Leader Nominee</b><span>Earl Haig Secondary School</span></li>
+      <li><b>2× Hackathon Finalist</b></li>
+    </ul>
+  </aside>
+
+  <section class="panel" aria-label="Specimen controls">
+    <header><span class="label">The specimen</span><span class="fig">fig. 38</span></header>
+    <div class="cols">
+      <fieldset class="col pass">
+        <legend class="label">Pass</legend>
+        <div class="swatches" role="radiogroup" aria-label="Render pass">
+          <button type="button" role="radio" aria-checked="true" data-pass="solid"><i class="sw sw-solid"></i>Solid</button>
+          <button type="button" role="radio" aria-checked="false" data-pass="glass"><i class="sw sw-glass"></i>Glass</button>
+          <button type="button" role="radio" aria-checked="false" data-pass="thermal"><i class="sw sw-thermal"></i>Thermal</button>
+        </div>
+      </fieldset>
+      <div class="col sliders">
+        <label class="slider"><span class="label">Explode</span><output id="exv" class="mono">0.00</output>
+          <input type="range" id="explode" min="0" max="1" step="0.01" value="0" aria-label="Explode">
+          <span class="ends"><i>assembled</i><i>apart</i></span></label>
+        <label class="slider"><span class="label">Load</span><output id="ldv" class="mono">34.0°C</output>
+          <input type="range" id="load" min="0" max="1.12" step="0.01" value="0" aria-label="Load">
+          <span class="ends"><i>idle</i><i>limit</i></span></label>
+      </div>
+      <div class="col buttons">
+        <div class="row3">
+          <button type="button" id="b-explode">Explode</button>
+          <button type="button" id="b-strobe">Strobe</button>
+          <button type="button" id="b-reset">Reset</button>
+        </div>
+        <div class="checks">
+          <label><input type="checkbox" id="t-rotate" checked> Auto-rotate</label>
+          <label><input type="checkbox" id="t-mesh"> Show mesh</label>
+          <label><input type="checkbox" id="t-labels"> Labels</label>
+        </div>
+        <div class="row2">
+          <button type="button" id="b-pause">Pause</button>
+          <button type="button" id="b-lights">Lights out</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<dialog id="film">
+  <video id="film-v" src="media/laptop_strobe_1080.mp4" poster="media/poster.jpg" controls loop playsinline preload="none"></video>
+  <form method="dialog"><button class="close mono" aria-label="Close">CLOSE</button></form>
+</dialog>
+
+<script type="module" src="app.js"></script>
+<script>
+  // film lightbox (works even if WebGL / the module fails)
+  const dlg = document.getElementById("film"), fv = document.getElementById("film-v");
+  const open = e => { e.preventDefault(); dlg.showModal(); fv.currentTime = 0; fv.muted = false; fv.play().catch(() => {}); };
+  document.getElementById("strobe-open").addEventListener("click", open);
+  document.getElementById("strobe-open-2").addEventListener("click", open);
+  dlg.addEventListener("close", () => fv.pause());
+  dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+</script>
+</body>
+</html>
