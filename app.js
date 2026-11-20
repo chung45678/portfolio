@@ -29,7 +29,7 @@ renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.0;
 
-const HORIZON = 0x2b2b2f;
+const HORIZON = 0x1f1f22;
 const scene = new THREE.Scene();
 scene.fog = new THREE.Fog(HORIZON, 1.6, 5.5);   // the floor dissolves into the dome's horizon band
 
@@ -41,7 +41,9 @@ const dome = new THREE.Mesh(new THREE.SphereGeometry(8, 48, 24), new THREE.Shade
   fragmentShader: `uniform vec3 top, mid, low; varying vec3 vD;
     void main(){ float y = vD.y;
       vec3 c = y > 0. ? mix(mid, top, smoothstep(0.0, 0.45, y)) : mix(mid, low, smoothstep(0.0, 0.5, -y));
-      gl_FragColor = vec4(c, 1.); #include <colorspace_fragment> }`,
+      gl_FragColor = vec4(c, 1.);
+      #include <colorspace_fragment>
+    }`,
 }));
 scene.add(dome);
 
@@ -94,7 +96,7 @@ const S = {
   parts: [], meshes: [], tE: 0, tTotal: 1, dur: 0.77, hover: false, locked: false, dragging: false,
   pass: "solid", autoRotate: !REDUCED, paused: false, hoverPart: null, pointer: null, clock: 0,
   rA: 1, rE: 1, cA: new THREE.Vector3(), cE: new THREE.Vector3(), floorA: 0,
-  cam: null, user: { az: 0, el: 0, zoom: 1 }, auto: 0, load: 0,
+  cam: null, user: { az: 0, el: 0, zoom: 1 }, auto: 0, load: 0, glitch: null, cycleT: 0,
 };
 
 // ---------------------------------------------------------------- pass materials
@@ -131,7 +133,9 @@ function thermalMaterial() {
       void main(){ float n = fbm(vW * 34. + vec3(0., uTime * .35, uTime * .12)); float T = uT + (n - .5) * 7.;
         vec3 col = texture2D(uLut, vec2(clamp((T - 20.) / 90., 0., 1.), .5)).rgb;
         float l = .74 + .26 * max(dot(normalize(vN), normalize(vec3(.3, 1., .5))), 0.);
-        gl_FragColor = vec4(col * l, 1.); #include <colorspace_fragment> }`,
+        gl_FragColor = vec4(col * l, 1.);
+      #include <colorspace_fragment>
+    }`,
   });
 }
 function makeGlass() {
@@ -221,17 +225,39 @@ shadow.scale.set(S.rA * 2.2, S.rA * 1.5, 1);
 pool.scale.set(S.rA * 3.4, S.rA * 2.6, 1);
 
 // ---------------------------------------------------------------- passes
+function matFor(p, k, i) { return k === "solid" ? p.solid[i] : k === "glass" ? glassMat : p.thermal; }
+function applyPart(p, k) {
+  if (p.passNow === k) return; p.passNow = k;
+  p.meshes.forEach((m, i) => { m.material = matFor(p, k, i); });
+  p.mmeshes.forEach((m, i) => { m.material = p.meshes[i].material; });
+}
 function setPass(k) {
-  S.pass = k;
+  S.pass = k; S.glitch = null;
   document.querySelectorAll("[data-pass]").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.pass === k)));
-  for (const p of S.parts) {
-    if (p.passNow === k) continue; p.passNow = k;
-    p.meshes.forEach((m, i) => { m.material = k === "solid" ? p.solid[i] : k === "glass" ? glassMat : p.thermal; });
-    p.mmeshes.forEach((m, i) => { m.material = p.meshes[i].material; });
-  }
+  for (const p of S.parts) applyPart(p, k);
+}
+// glitch cut between passes: parts flicker between the old and new pass in short random blocks
+const glCanvas = $("gl");
+const GLITCH_DUR = 0.36, CYCLE_EVERY = 10;
+function glitchTo(k) {
+  if (REDUCED || k === "thermal" || S.pass === k) { setPass(k); return; }
+  const from = S.pass;
+  setPass(k);
+  for (const p of S.parts) applyPart(p, from);
+  S.glitch = { from, to: k, t: 0, next: 0 };
+  glCanvas.classList.remove("glitch"); void glCanvas.offsetWidth; glCanvas.classList.add("glitch");
+}
+function stepGlitch(dt) {
+  const g = S.glitch; if (!g) return;
+  g.t += dt;
+  if (g.t >= GLITCH_DUR) { for (const p of S.parts) applyPart(p, g.to); S.glitch = null; glCanvas.classList.remove("glitch"); return; }
+  if (g.t < g.next) return;
+  g.next = g.t + 0.03 + Math.random() * 0.05;   // hold each block 1–5 frames
+  const bias = g.t / GLITCH_DUR;               // more parts land on the new pass as it goes
+  for (const p of S.parts) applyPart(p, Math.random() < 0.2 + 0.8 * bias ? g.to : g.from);
 }
 setPass("solid");
-document.querySelectorAll("[data-pass]").forEach((b) => b.addEventListener("click", () => setPass(b.dataset.pass)));
+document.querySelectorAll("[data-pass]").forEach((b) => b.addEventListener("click", () => { S.cycleT = 0; glitchTo(b.dataset.pass); }));
 const bRot = $("b-rotate"), bPause = $("b-pause");
 bRot.setAttribute("aria-pressed", String(S.autoRotate));
 bRot.addEventListener("click", () => { S.autoRotate = !S.autoRotate; bRot.setAttribute("aria-pressed", String(S.autoRotate)); });
@@ -353,6 +379,13 @@ function frame(now) {
   if (document.hidden) return;
   if (!S.paused) S.clock += dt;
   thermalShared.uTime.value = S.clock;
+
+  // every 10 s the solid and glass passes swap with a glitch cut (thermal stays put until you leave it)
+  if (!S.paused && !S.glitch && S.pass !== "thermal") {
+    S.cycleT += dt;
+    if (S.cycleT >= CYCLE_EVERY) { S.cycleT = 0; glitchTo(S.pass === "solid" ? "glass" : "solid"); }
+  }
+  stepGlitch(dt);
 
   // camera keyframe from scroll, eased so fast scrolls glide
   const K = scrollKey();

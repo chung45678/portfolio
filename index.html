@@ -9,6 +9,7 @@
 <meta property="og:description" content="Management Engineering @ Waterloo. Product, design and code.">
 <meta property="og:image" content="media/still_clean.jpg">
 <meta name="theme-color" content="#0a0a0b">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -32,7 +33,7 @@
   <a href="#top" class="brand">CHUNG HE</a>
   <a href="#work">Work</a>
   <a href="#experience">Experience</a>
-  <a href="#about">About</a>
+  <a href="#about">Extracurriculars</a>
   <a href="mailto:hechung128@gmail.com" class="cta">Email me</a>
 </nav>
 
@@ -45,7 +46,7 @@
     <div class="hero-copy">
       <h1>Chung He</h1>
       <p class="lede">Management Engineering student at the University of Waterloo, building at the intersection of product, design and code. Looking for product, design and strategy co-op roles.</p>
-      <p class="actions"><a class="btn" href="mailto:hechung128@gmail.com">hechung128@gmail.com <span>→</span></a><a class="btn ghost" href="https://github.com/chung45678">GitHub <span>↗</span></a></p>
+      <p class="actions"><a class="btn" href="media/Chung-He-Resume.pdf" target="_blank" rel="noopener">Résumé <span>↗</span></a><a class="btn ghost" href="https://github.com/chung45678">GitHub <span>↗</span></a></p>
     </div>
     <p class="scroll-cue mono">SCROLL TO INSPECT</p>
   </section>
@@ -55,7 +56,33 @@
       <p class="eyebrow mono"><span>01 / 04 · Projects</span></p>
       <h2>Things I’ve built.</h2>
       <div class="cards">
-        <article class="card">
+        <article class="card" data-preview="media/projects/pairwise-preview.jpg">
+          <a class="media" href="https://github.com/chung45678/pairwise" aria-label="Pairwise on GitHub"><img src="media/projects/pairwise.jpg" alt="Pairwise match list for a club mixer" loading="lazy"></a>
+          <div>
+            <h3>Pairwise <a href="https://github.com/chung45678/pairwise" class="arrow" aria-label="Pairwise on GitHub">↗</a></h3>
+            <p>Open-source event matchmaker for student clubs: who to meet, why, and how to open the conversation.</p>
+            <p class="tags mono">FastAPI · React · Tailwind</p>
+          </div>
+        </article>
+        <article class="card" data-preview="media/projects/leaky-preview.jpg">
+          <a class="media" href="https://github.com/chung45678/charges-tracker" aria-label="Leaky on GitHub">
+            <video src="media/projects/leaky.mp4" poster="media/projects/leaky.jpg" muted loop playsinline autoplay preload="metadata"></video>
+          </a>
+          <div>
+            <h3>Leaky <a href="https://github.com/chung45678/charges-tracker" class="arrow" aria-label="Leaky on GitHub">↗</a></h3>
+            <p>Drop in a bank CSV; it finds every recurring charge, price hike and converted trial, all in the browser.</p>
+            <p class="tags mono">React · TypeScript · Vitest</p>
+          </div>
+        </article>
+        <article class="card" data-preview="media/projects/shift-triage-preview.jpg">
+          <a class="media" href="https://github.com/chung45678/shift-triage" aria-label="Shift Triage on GitHub"><img src="media/projects/shift-triage.jpg" alt="Shift Triage dispatch staffing screen" loading="lazy"></a>
+          <div>
+            <h3>Shift Triage <a href="https://github.com/chung45678/shift-triage" class="arrow" aria-label="Shift Triage on GitHub">↗</a></h3>
+            <p>Staffing for food-bank coordinators: when someone calls out, it re-plans critical roles within the labour budget.</p>
+            <p class="tags mono">React · TypeScript · Vite</p>
+          </div>
+        </article>
+        <article class="card" data-preview="media/laptop_strobe_720.mp4" data-poster="media/poster.jpg">
           <button class="media" id="strobe-open" type="button" aria-label="Play the Object Strobe film with sound">
             <video src="media/laptop_strobe_720.mp4" poster="media/card_poster.jpg" muted loop playsinline autoplay preload="metadata"></video>
           </button>
@@ -63,32 +90,6 @@
             <h3>Object Strobe <a href="#" class="arrow" id="strobe-open-2" aria-label="Play the film">↗</a></h3>
             <p>A product film built entirely in code. The laptop behind this page comes apart, overheats and recovers in 9.6 s.</p>
             <p class="tags mono">Blender · numpy · three.js</p>
-          </div>
-        </article>
-        <article class="card">
-          <a class="media" href="https://pairwise-five-lake.vercel.app" aria-label="Open Pairwise"><img src="media/projects/pairwise.jpg" alt="Pairwise match list for a club mixer" loading="lazy"></a>
-          <div>
-            <h3>Pairwise <a href="https://pairwise-five-lake.vercel.app" class="arrow" aria-label="Open Pairwise">↗</a></h3>
-            <p>Open-source event matchmaker for student clubs: who to meet, why, and how to open the conversation.</p>
-            <p class="tags mono">FastAPI · React · Tailwind</p>
-          </div>
-        </article>
-        <article class="card">
-          <a class="media" href="https://claude.ai/artifact/WwWcRmjAibCJ5ETSc1mbR7" aria-label="Open the Leaky demo">
-            <video src="media/projects/leaky.mp4" poster="media/projects/leaky.jpg" muted loop playsinline autoplay preload="metadata"></video>
-          </a>
-          <div>
-            <h3>Leaky <a href="https://claude.ai/artifact/WwWcRmjAibCJ5ETSc1mbR7" class="arrow" aria-label="Open the Leaky demo">↗</a></h3>
-            <p>Drop in a bank CSV; it finds every recurring charge, price hike and converted trial, all in the browser.</p>
-            <p class="tags mono">React · TypeScript · Vitest</p>
-          </div>
-        </article>
-        <article class="card">
-          <a class="media" href="https://shift-triage-lab.robustoatcake2.chatgpt.site" aria-label="Open Shift Triage"><img src="media/projects/shift-triage.jpg" alt="Shift Triage dispatch staffing screen" loading="lazy"></a>
-          <div>
-            <h3>Shift Triage <a href="https://shift-triage-lab.robustoatcake2.chatgpt.site" class="arrow" aria-label="Open Shift Triage">↗</a></h3>
-            <p>Staffing for food-bank coordinators: when someone calls out, it re-plans critical roles within the labour budget.</p>
-            <p class="tags mono">React · TypeScript · Vite</p>
           </div>
         </article>
       </div>
@@ -103,24 +104,18 @@
         <li><div><h3>Product &amp; Strategy Intern</h3><p class="org mono">Social Closet</p><p>Redesigned the app’s onboarding flow in Figma, added a progress indicator system and fixed UI inconsistencies across screens.</p></div><span class="date mono">2026</span></li>
         <li><div><h3>VP Culture</h3><p class="org mono">UW Blueprint</p><p>Runs culture and member experience for Waterloo’s tech-for-nonprofits club.</p></div><span class="date mono">2026–now</span></li>
         <li><div><h3>Events Director</h3><p class="org mono">UW Product Management</p><p>Plans and runs events for the club. This is the work Pairwise grew out of.</p></div><span class="date mono">2026–now</span></li>
-        <li><div><h3>Co-President</h3><p class="org mono">DECA</p><p>Grew the chapter from ~30 to <b>80 members</b> and qualified for <b>ICDC</b>.</p></div><span class="date mono">2024–2026</span></li>
-        <li><div><h3>President</h3><p class="org mono">Aquatikey · Junior Achievement</p><p>Ran a company making recycled-filament keychains modeled on Canadian marine species. Sold <b>100+ units</b>, gave part of the revenue to charity and was nominated <b>President of the Year</b>.</p></div><span class="date mono">2024–2025</span></li>
-      </ol>
+        </ol>
     </div>
   </section>
 
   <section class="sec right-3d" id="about" data-cam="-150,38,0.6,0.24,0.45,1.08">
     <div class="block">
-      <p class="eyebrow mono"><span>03 / 04 · Outside of work</span></p>
-      <h2>Off the clock.</h2>
-      <div class="stats">
-        <div><b>13</b><span class="mono">years of piano</span></div>
-        <div><b>ARCT</b><span class="mono">level training</span></div>
-        <div><b>3</b><span class="mono">varsity baseball seasons</span></div>
-      </div>
+      <p class="eyebrow mono"><span>03 / 04 · Extracurriculars</span></p>
+      <h2>My extracurriculars.</h2>
       <ol class="rows">
-        <li><div><h3>Pianist and piano teacher</h3><p>ARCT-level training, won an <b>international competition</b>, and now teaches at a music hall.</p></div><span class="date mono">13 yrs</span></li>
-        <li><div><h3>Varsity baseball</h3><p>Played three seasons and helped younger players fit into the team.</p></div><span class="date mono">3 yrs</span></li>
+        <li><div><h3>Co-President</h3><p class="org mono">DECA</p><p>Grew the chapter from ~30 to <b>80 members</b> and qualified for <b>ICDC</b>.</p></div><span class="date mono">2024–2026</span></li>
+        <li><div><h3>President</h3><p class="org mono">Aquatikey · Junior Achievement</p><p>Ran a company making recycled-filament keychains modeled on Canadian marine species. Sold <b>100+ units</b>, gave part of the revenue to charity and was nominated <b>President of the Year</b>.</p></div><span class="date mono">2024–2025</span></li>
+        <li><div><h3>Pianist and piano teacher</h3><p class="org mono">ARCT level · 13 years</p><p>Won an <b>international competition</b> and now teaches at a music hall.</p></div><span class="date mono">13 yrs</span></li>
       </ol>
       <p class="eyebrow mono sub"><span>Awards</span></p>
       <ul class="awards">
@@ -141,6 +136,9 @@
     <footer class="foot mono"><span>© 2026 Chung He</span><span>The laptop is the Object Strobe model · drag it, hover it</span></footer>
   </section>
 </main>
+
+<!-- project hover preview -->
+<div class="preview" id="preview" aria-hidden="true"><div class="pv-frame"></div><p class="pv-cap mono"></p></div>
 
 <!-- dashboard -->
 <div class="dash" role="group" aria-label="Specimen controls">
@@ -168,6 +166,33 @@
   document.getElementById("strobe-open-2").addEventListener("click", open);
   dlg.addEventListener("close", () => fv.pause());
   dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+
+  // hover a project card: a large preview opens beside it (fine pointers only)
+  const pv = document.getElementById("preview"), pvf = pv.querySelector(".pv-frame"), pvc = pv.querySelector(".pv-cap");
+  const fine = matchMedia("(hover: hover) and (pointer: fine)");
+  let pvCard = null;
+  const place = () => {
+    if (!pvCard) return;
+    const r = pvCard.getBoundingClientRect(), w = pv.offsetWidth, h = pv.offsetHeight, m = 16;
+    let x = r.right + 18; if (x + w > innerWidth - m) x = Math.max(m, r.left - w - 18);
+    const y = Math.min(innerHeight - h - m, Math.max(70, r.top + r.height / 2 - h / 2));
+    pv.style.transform = `translate(${x}px, ${y}px)`;
+  };
+  document.querySelectorAll(".card[data-preview]").forEach(card => {
+    card.addEventListener("mouseenter", () => {
+      if (!fine.matches) return;
+      pvCard = card;
+      const src = card.dataset.preview, vid = /\.mp4$/.test(src);
+      pvf.className = "pv-frame" + (vid ? " tall" : "");
+      pvf.innerHTML = vid ? `<video src="${src}" poster="${card.dataset.poster || ""}" muted loop playsinline autoplay></video>` : `<img src="${src}" alt="">`;
+      const link = card.querySelector("h3 a");
+      pvc.textContent = card.querySelector("h3").firstChild.textContent.trim() + (link.id ? " · click to play with sound" : " · open on GitHub ↗");
+      pv.classList.add("on"); place();
+      pvf.querySelector("img,video").addEventListener(vid ? "loadedmetadata" : "load", place, { once: true });
+    });
+    card.addEventListener("mouseleave", () => { pvCard = null; pv.classList.remove("on"); });
+  });
+  addEventListener("scroll", place, { passive: true });
 </script>
 </body>
 </html>
