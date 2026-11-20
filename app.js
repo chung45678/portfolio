@@ -326,7 +326,10 @@ function stepGlitch(dt) {
   }
 }
 setPass("solid");
-document.querySelectorAll("[data-pass]").forEach((b) => b.addEventListener("click", () => { S.cycleT = 0; glitchTo(b.dataset.pass); }));
+document.querySelectorAll("[data-pass]").forEach((b) => b.addEventListener("click", () => { S.cycleT = 0; S.pickedInWork = S.inWork; glitchTo(b.dataset.pass); }));
+// Projects (Work) is solid-only: entering it glitches any other pass back to solid and pauses the cycle
+const workEl = document.getElementById("work");
+S.inWork = false; S.pickedInWork = false;
 const bRot = $("b-rotate"), bPause = $("b-pause");
 bRot.setAttribute("aria-pressed", String(S.autoRotate));
 bRot.addEventListener("click", () => { S.autoRotate = !S.autoRotate; bRot.setAttribute("aria-pressed", String(S.autoRotate)); });
@@ -457,8 +460,12 @@ function frame(now) {
   if (!S.paused) S.clock += dt;
   thermalShared.uTime.value = S.clock;
 
-  // every 10 s the solid and glass passes swap with a glitch cut (thermal stays put until you leave it)
-  if (!S.paused && !S.glitch && S.pass !== "thermal") {
+  const cy = scrollY + innerHeight / 2, wasInWork = S.inWork;
+  S.inWork = cy > workEl.offsetTop && cy < workEl.offsetTop + workEl.offsetHeight;
+  if (S.inWork !== wasInWork) { S.pickedInWork = false; S.cycleT = 0; }
+  if (S.inWork && !S.pickedInWork && S.pass !== "solid" && !(S.glitch && S.glitch.to === "solid")) glitchTo("solid");
+  // every 10 s the solid and glass passes swap with a glitch cut (thermal stays put; Work stays solid)
+  if (!S.paused && !S.glitch && S.pass !== "thermal" && !S.inWork) {
     S.cycleT += dt;
     if (S.cycleT >= CYCLE_EVERY) { S.cycleT = 0; glitchTo(S.pass === "solid" ? "glass" : "solid"); }
   }
