@@ -217,15 +217,34 @@ const glowTex = new THREE.CanvasTexture(glowCv); glowTex.colorSpace = THREE.SRGB
 const glowMat = new THREE.MeshBasicMaterial({ map: glowTex, transparent: true, opacity: 0, blending: THREE.AdditiveBlending,
   depthWrite: false, toneMapped: false, fog: false });
 const glow = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), glowMat);
-glow.renderOrder = 5;
+glow.renderOrder = 6;
+// the hovered project's demo plays on the screen, fitted inside it (letterboxed / pillarboxed on black)
+const SCREEN = { w: 1, h: 1 };
+const vidEl = Object.assign(document.createElement("video"), { muted: true, loop: true, playsInline: true, preload: "auto" });
+vidEl.setAttribute("muted", ""); vidEl.setAttribute("playsinline", "");
+const vidTex = new THREE.VideoTexture(vidEl); vidTex.colorSpace = THREE.SRGBColorSpace;
+const vidMat = new THREE.MeshBasicMaterial({ map: vidTex, color: 0xd8d8d8, transparent: true, opacity: 0, depthWrite: false, toneMapped: false, fog: false });
+const screenVid = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), vidMat);
+screenVid.renderOrder = 5;
+const VID = { src: null, ready: false, a: 0 };
+vidEl.addEventListener("loadedmetadata", () => {
+  const a = vidEl.videoWidth / vidEl.videoHeight, A = SCREEN.w / SCREEN.h;
+  screenVid.scale.set(a > A ? SCREEN.w : SCREEN.h * a, a > A ? SCREEN.w / a : SCREEN.h, 1);
+});
+vidEl.addEventListener("playing", () => { VID.ready = true; });
 {
   // the cover glass is a thin slab in its own mesh space (thin along y, front at min y): sit 0.8 mm in front of it
   const m = glassPart.meshes[0]; m.geometry.computeBoundingBox();
   const gb = m.geometry.boundingBox, c = gb.getCenter(new THREE.Vector3()), sz = gb.getSize(new THREE.Vector3());
   glow.scale.set(sz.x * 0.9, sz.z * 0.86, 1);
   glow.rotation.x = Math.PI / 2;                    // plane normal +z → −y (out of the screen)
-  glow.position.set(c.x, gb.min.y - 0.0008, c.z);
+  glow.position.set(c.x, gb.min.y - 0.0012, c.z);
   m.add(glow);
+  SCREEN.w = sz.x * 0.94; SCREEN.h = sz.z * 0.9;
+  screenVid.scale.set(SCREEN.w, SCREEN.h, 1);       // start at screen size: the laptop's bounds are measured right after this
+  screenVid.rotation.x = Math.PI / 2;
+  screenVid.position.set(c.x, gb.min.y - 0.0008, c.z);
+  m.add(screenVid);
 }
 const GLOW = { name: null, shown: null, a: 0 };
 const fontReady = document.fonts?.load("800 120px Archivo").catch(() => {}) ?? Promise.resolve();
@@ -247,7 +266,12 @@ function paintGlow(name) {
   glowTex.needsUpdate = true;
 }
 addEventListener("project-hover", (e) => {
-  GLOW.name = e.detail || null;
+  const d = e.detail || null;
+  GLOW.name = d ? d.name : null;
+  if (d && d.src) {
+    if (d.src !== VID.src) { VID.src = d.src; VID.ready = false; vidEl.src = d.src; vidEl.currentTime = 0; }
+    vidEl.play().catch(() => {});
+  }
   if (GLOW.name && GLOW.name !== GLOW.shown) fontReady.then(() => { if (GLOW.name) { paintGlow(GLOW.name); GLOW.shown = GLOW.name; } });
 });
 
@@ -449,10 +473,16 @@ function frame(now) {
   S.load = kload;
 
   updateHover();
-  const glowing = !!GLOW.name && GLOW.shown === GLOW.name;
+  const glowing = !!GLOW.name && GLOW.shown === GLOW.name && !(VID.ready && VID.a > 0.6);
   GLOW.a += ((glowing ? 1 : 0) - GLOW.a) * (1 - Math.exp(-dt * (glowing ? 7 : 5)));
   glowMat.opacity = GLOW.a * 0.7 * (0.88 + 0.12 * Math.sin(S.clock * 2.4)) * (1 - Math.min(1, S.tE / S.tTotal * 3));
   glow.visible = glowMat.opacity > 0.003 && S.pass !== "thermal";
+  // the demo fades in once it's playing; the name glow only bridges the load
+  const shut = 1 - Math.min(1, S.tE / S.tTotal * 3);
+  VID.a += ((GLOW.name && VID.ready ? 1 : 0) - VID.a) * (1 - Math.exp(-dt * 6));
+  vidMat.opacity = VID.a * shut;
+  screenVid.visible = vidMat.opacity > 0.003 && S.pass !== "thermal";
+  if (!GLOW.name && VID.a < 0.01 && !vidEl.paused) vidEl.pause();
   if (GLOW.name) {   // ease the turntable back so the screen faces you
     const home = Math.round(S.auto / 360) * 360, a2 = 1 - Math.exp(-dt * 3);
     S.auto += (home - S.auto) * a2; S.user.az *= 1 - a2; S.user.el *= 1 - a2;

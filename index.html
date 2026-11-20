@@ -56,7 +56,7 @@
       <p class="eyebrow mono"><span>01 / 04 · Projects</span></p>
       <h2>Things I’ve built.</h2>
       <div class="cards">
-        <article class="card" data-name="Pairwise" data-preview="media/projects/pairwise-preview.mp4" data-poster="media/projects/pairwise-preview.jpg">
+        <article class="card" data-name="Pairwise" data-screen="media/projects/pairwise-preview.mp4">
           <a class="media" href="https://github.com/chung45678/pairwise" target="_blank" rel="noopener" aria-label="Pairwise on GitHub">
             <video src="media/projects/pairwise.mp4" poster="media/projects/pairwise.jpg" muted loop playsinline autoplay preload="metadata"></video>
           </a>
@@ -66,7 +66,7 @@
             <p class="tags mono">FastAPI · React · Postgres</p>
           </div>
         </article>
-        <article class="card" data-name="Snip" data-preview="media/projects/snip-preview.mp4" data-poster="media/projects/snip-preview.jpg">
+        <article class="card" data-name="Snip" data-screen="media/projects/snip-preview.mp4">
           <a class="media" href="https://github.com/chung45678/charges-tracker" target="_blank" rel="noopener" aria-label="Snip on GitHub">
             <video src="media/projects/snip.mp4" poster="media/projects/snip.jpg" muted loop playsinline autoplay preload="metadata"></video>
           </a>
@@ -76,7 +76,7 @@
             <p class="tags mono">React · TypeScript · Vitest</p>
           </div>
         </article>
-        <article class="card" data-name="Shift Triage" data-preview="media/projects/shift-triage-preview.mp4" data-poster="media/projects/shift-triage-preview.jpg">
+        <article class="card" data-name="Shift Triage" data-screen="media/projects/shift-triage-preview.mp4">
           <a class="media" href="https://github.com/chung45678/shift-triage" target="_blank" rel="noopener" aria-label="Shift Triage on GitHub">
             <video src="media/projects/shift-triage.mp4" poster="media/projects/shift-triage.jpg" muted loop playsinline autoplay preload="metadata"></video>
           </a>
@@ -86,7 +86,7 @@
             <p class="tags mono">React · TypeScript · Vite</p>
           </div>
         </article>
-        <article class="card" data-name="Object Strobe" data-preview="media/laptop_strobe_720.mp4" data-poster="media/poster.jpg" data-tall="1">
+        <article class="card" data-name="Object Strobe" data-screen="media/laptop_strobe_720.mp4">
           <button class="media" id="strobe-open" type="button" aria-label="Play the Object Strobe film with sound">
             <video src="media/laptop_strobe_720.mp4" poster="media/card_poster.jpg" muted loop playsinline autoplay preload="metadata"></video>
           </button>
@@ -141,9 +141,6 @@
   </section>
 </main>
 
-<!-- project hover preview -->
-<div class="preview" id="preview" aria-hidden="true"><div class="pv-frame"></div><p class="pv-cap mono"></p></div>
-
 <!-- dashboard -->
 <div class="dash" role="group" aria-label="Specimen controls">
   <span class="mono dlabel">PASS</span>
@@ -171,37 +168,11 @@
   dlg.addEventListener("close", () => fv.pause());
   dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
 
-  // hover a project card: a large preview opens beside it (fine pointers only)
-  const pv = document.getElementById("preview"), pvf = pv.querySelector(".pv-frame"), pvc = pv.querySelector(".pv-cap");
-  const fine = matchMedia("(hover: hover) and (pointer: fine)");
-  let pvCard = null;
-  const place = () => {
-    if (!pvCard) return;
-    const r = pvCard.getBoundingClientRect(), w = pv.offsetWidth, h = pv.offsetHeight, m = 16;
-    let x = r.right + 18; if (x + w > innerWidth - m) x = Math.max(m, r.left - w - 18);
-    const y = Math.min(innerHeight - h - m, Math.max(70, r.top + r.height / 2 - h / 2));
-    pv.style.transform = `translate(${x}px, ${y}px)`;
-  };
-  // tell the 3D laptop which project is hovered (its screen glows with the name)
+  // hovering a project plays its demo on the 3D laptop's screen (the name glows while it loads)
   document.querySelectorAll(".card[data-name]").forEach(card => {
-    card.addEventListener("mouseenter", () => dispatchEvent(new CustomEvent("project-hover", { detail: card.dataset.name })));
+    card.addEventListener("mouseenter", () => dispatchEvent(new CustomEvent("project-hover", { detail: { name: card.dataset.name, src: card.dataset.screen } })));
     card.addEventListener("mouseleave", () => dispatchEvent(new CustomEvent("project-hover", { detail: null })));
   });
-  document.querySelectorAll(".card[data-preview]").forEach(card => {
-    card.addEventListener("mouseenter", () => {
-      if (!fine.matches) return;
-      pvCard = card;
-      const src = card.dataset.preview, vid = /\.mp4$/.test(src);
-      pvf.className = "pv-frame" + (card.dataset.tall ? " tall" : "");
-      pvf.innerHTML = vid ? `<video src="${src}" poster="${card.dataset.poster || ""}" muted loop playsinline autoplay></video>` : `<img src="${src}" alt="">`;
-      const link = card.querySelector("h3 a");
-      pvc.textContent = card.querySelector("h3").firstChild.textContent.trim() + (link.id ? " · click to play with sound" : " · open on GitHub ↗");
-      pv.classList.add("on"); place();
-      pvf.querySelector("img,video").addEventListener(vid ? "loadedmetadata" : "load", place, { once: true });
-    });
-    card.addEventListener("mouseleave", () => { pvCard = null; pv.classList.remove("on"); });
-  });
-  addEventListener("scroll", place, { passive: true });
 
   // clicking anywhere on a project card opens its GitHub repo in a new tab
   document.querySelectorAll(".card").forEach(card => {
