@@ -51,20 +51,22 @@
     <p class="scroll-cue mono">SCROLL TO INSPECT</p>
   </section>
 
-  <section class="sec right-3d" id="work" data-cam="-48,22,0.66,0.24,1,0.35">
+  <section class="sec right-3d" id="work" data-cam="-30,16,0.62,0.24,0,0.35" data-burst>
     <div class="block">
       <p class="eyebrow mono"><span>01 / 04 · Projects</span></p>
       <h2>Things I’ve built.</h2>
       <div class="cards">
-        <article class="card" data-preview="media/projects/pairwise-preview.jpg">
-          <a class="media" href="https://github.com/chung45678/pairwise" target="_blank" rel="noopener" aria-label="Pairwise on GitHub"><img src="media/projects/pairwise.jpg" alt="Pairwise organizer view of matched guests with highlighted shared interests" loading="lazy"></a>
+        <article class="card" data-name="Pairwise" data-preview="media/projects/pairwise-preview.mp4" data-poster="media/projects/pairwise-preview.jpg">
+          <a class="media" href="https://github.com/chung45678/pairwise" target="_blank" rel="noopener" aria-label="Pairwise on GitHub">
+            <video src="media/projects/pairwise.mp4" poster="media/projects/pairwise.jpg" muted loop playsinline autoplay preload="metadata"></video>
+          </a>
           <div>
             <h3>Pairwise <a href="https://github.com/chung45678/pairwise" target="_blank" rel="noopener" class="arrow" aria-label="Pairwise on GitHub">↗</a></h3>
             <p>Tells everyone at a club event who to meet and why: two or three matches each, the words that connected them, and an opener.</p>
             <p class="tags mono">FastAPI · React · Postgres</p>
           </div>
         </article>
-        <article class="card" data-preview="media/projects/snip-preview.mp4" data-poster="media/projects/snip-preview.jpg">
+        <article class="card" data-name="Snip" data-preview="media/projects/snip-preview.mp4" data-poster="media/projects/snip-preview.jpg">
           <a class="media" href="https://github.com/chung45678/charges-tracker" target="_blank" rel="noopener" aria-label="Snip on GitHub">
             <video src="media/projects/snip.mp4" poster="media/projects/snip.jpg" muted loop playsinline autoplay preload="metadata"></video>
           </a>
@@ -74,15 +76,17 @@
             <p class="tags mono">React · TypeScript · Vitest</p>
           </div>
         </article>
-        <article class="card" data-preview="media/projects/shift-triage-preview.jpg">
-          <a class="media" href="https://github.com/chung45678/shift-triage" target="_blank" rel="noopener" aria-label="Shift Triage on GitHub"><img src="media/projects/shift-triage.jpg" alt="Shift Triage dispatch console with coverage, budget and recommended plan" loading="lazy"></a>
+        <article class="card" data-name="Shift Triage" data-preview="media/projects/shift-triage-preview.mp4" data-poster="media/projects/shift-triage-preview.jpg">
+          <a class="media" href="https://github.com/chung45678/shift-triage" target="_blank" rel="noopener" aria-label="Shift Triage on GitHub">
+            <video src="media/projects/shift-triage.mp4" poster="media/projects/shift-triage.jpg" muted loop playsinline autoplay preload="metadata"></video>
+          </a>
           <div>
             <h3>Shift Triage <a href="https://github.com/chung45678/shift-triage" target="_blank" rel="noopener" class="arrow" aria-label="Shift Triage on GitHub">↗</a></h3>
             <p>A dispatch console for food-bank coordinators: when someone calls out, it re-plans critical roles within the labour budget.</p>
             <p class="tags mono">React · TypeScript · Vite</p>
           </div>
         </article>
-        <article class="card" data-preview="media/laptop_strobe_720.mp4" data-poster="media/poster.jpg" data-tall="1">
+        <article class="card" data-name="Object Strobe" data-preview="media/laptop_strobe_720.mp4" data-poster="media/poster.jpg" data-tall="1">
           <button class="media" id="strobe-open" type="button" aria-label="Play the Object Strobe film with sound">
             <video src="media/laptop_strobe_720.mp4" poster="media/card_poster.jpg" muted loop playsinline autoplay preload="metadata"></video>
           </button>
@@ -126,7 +130,7 @@
     </div>
   </section>
 
-  <section class="sec contact" id="contact" data-cam="210,10,0.5,0,0,0.2">
+  <section class="sec contact" id="contact" data-cam="210,10,0.56,0.27,0,0.2">
     <div class="block">
       <p class="eyebrow mono"><span>04 / 04 · Contact</span></p>
       <h2 class="huge">Let’s talk.</h2>
@@ -178,6 +182,11 @@
     const y = Math.min(innerHeight - h - m, Math.max(70, r.top + r.height / 2 - h / 2));
     pv.style.transform = `translate(${x}px, ${y}px)`;
   };
+  // tell the 3D laptop which project is hovered (its screen glows with the name)
+  document.querySelectorAll(".card[data-name]").forEach(card => {
+    card.addEventListener("mouseenter", () => dispatchEvent(new CustomEvent("project-hover", { detail: card.dataset.name })));
+    card.addEventListener("mouseleave", () => dispatchEvent(new CustomEvent("project-hover", { detail: null })));
+  });
   document.querySelectorAll(".card[data-preview]").forEach(card => {
     card.addEventListener("mouseenter", () => {
       if (!fine.matches) return;

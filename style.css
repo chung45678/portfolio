@@ -121,15 +121,15 @@ h3 { font-weight: 650; font-size: 18px; letter-spacing: -.005em; line-height: 1.
 .tog[aria-pressed="true"] { color: var(--ink); background: rgba(255,255,255,.08); }
 
 /* ---------- project hover preview ---------- */
-.preview { position: fixed; left: 0; top: 0; z-index: 4; width: min(460px, 36vw); padding: 8px; border-radius: 16px; pointer-events: none;
+.preview { position: fixed; left: 0; top: 0; z-index: 4; width: min(230px, 18vw); padding: 5px; border-radius: 12px; pointer-events: none;
   background: rgba(14,14,16,.82); border: 1px solid rgba(236,232,223,.22); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
   box-shadow: 0 30px 80px rgba(0,0,0,.6); opacity: 0; visibility: hidden; transition: opacity .18s, visibility 0s .18s; }
 .preview.on { opacity: 1; visibility: visible; transition: opacity .18s; }
-.pv-frame { border-radius: 10px; overflow: hidden; background: #000; aspect-ratio: 16 / 11; }
+.pv-frame { border-radius: 8px; overflow: hidden; background: #000; aspect-ratio: 16 / 11; }
 .pv-frame.tall { aspect-ratio: 9 / 16; width: 62%; margin: 0 auto; }
 .pv-frame:has(video):not(.tall) { aspect-ratio: 16 / 9; }
 .pv-frame img, .pv-frame video { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
-.pv-cap { color: var(--mute); padding: 9px 4px 2px; }
+.pv-cap { color: var(--mute); padding: 6px 3px 1px; font-size: 9px; }
 .preview.on .pv-frame { animation: pv-in .22s cubic-bezier(.2,.8,.2,1); }
 @keyframes pv-in { from { transform: scale(.96); filter: brightness(1.6) contrast(1.4); } }
 

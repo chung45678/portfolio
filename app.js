@@ -209,6 +209,49 @@ for (const pm of meta.parts) {
 S.tTotal = Math.max(...S.parts.map((p) => p.start)) + S.dur;
 const lidPart = S.parts.find((p) => p.id === "P03");
 
+// ---------------------------------------------------------------- screen glow (project name on the display)
+// a thin plane just in front of the cover glass, in the glass part's own space (its front faces −y there)
+const glassPart = S.parts.find((p) => p.id === "P04");
+const glowCv = document.createElement("canvas"); glowCv.width = 1024; glowCv.height = 640;
+const glowTex = new THREE.CanvasTexture(glowCv); glowTex.colorSpace = THREE.SRGBColorSpace; glowTex.anisotropy = 4;
+const glowMat = new THREE.MeshBasicMaterial({ map: glowTex, transparent: true, opacity: 0, blending: THREE.AdditiveBlending,
+  depthWrite: false, toneMapped: false, fog: false });
+const glow = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), glowMat);
+glow.renderOrder = 5;
+{
+  const n = glassPart.node; root.updateMatrixWorld(true);
+  const inv = n.matrixWorld.clone().invert(), gb = new THREE.Box3(), tb = new THREE.Box3();
+  for (const m of glassPart.meshes) { m.geometry.computeBoundingBox(); tb.copy(m.geometry.boundingBox).applyMatrix4(m.matrixWorld).applyMatrix4(inv); gb.union(tb); }
+  const c = gb.getCenter(new THREE.Vector3()), sz = gb.getSize(new THREE.Vector3());
+  glow.scale.set(sz.x * 0.92, sz.z * 0.9, 1);
+  glow.rotation.x = Math.PI / 2;                    // plane normal +z → −y (out of the screen)
+  glow.position.set(c.x, gb.min.y - 0.0006, c.z);
+  n.add(glow);
+}
+const GLOW = { name: null, shown: null, a: 0 };
+const fontReady = document.fonts?.load("800 120px Archivo").catch(() => {}) ?? Promise.resolve();
+function paintGlow(name) {
+  const g = glowCv.getContext("2d"), W = glowCv.width, H = glowCv.height;
+  g.clearRect(0, 0, W, H);
+  const fs = Math.min(150, (W * 0.8) / Math.max(4, name.length * 0.78));
+  g.font = `800 ${fs}px Archivo, system-ui, sans-serif`;
+  if ("fontStretch" in g) g.fontStretch = "ultra-expanded";
+  g.textAlign = "center"; g.textBaseline = "middle";
+  const txt = name.toUpperCase();
+  // soft bloom, then a dim white core
+  g.shadowColor = "rgba(225,232,255,.9)";
+  for (const [blur, a] of [[60, 0.22], [26, 0.3], [10, 0.4]]) { g.shadowBlur = blur; g.fillStyle = `rgba(214,222,245,${a})`; g.fillText(txt, W / 2, H / 2); }
+  g.shadowBlur = 0; g.fillStyle = "rgba(236,238,245,.55)"; g.fillText(txt, W / 2, H / 2);
+  g.font = `500 ${Math.round(fs * 0.16)}px "JetBrains Mono", ui-monospace, monospace`;
+  if ("fontStretch" in g) g.fontStretch = "normal";
+  g.fillStyle = "rgba(200,206,222,.45)"; g.fillText("— PROJECT —", W / 2, H / 2 - fs * 0.78);
+  glowTex.needsUpdate = true;
+}
+addEventListener("project-hover", (e) => {
+  GLOW.name = e.detail || null;
+  if (GLOW.name && GLOW.name !== GLOW.shown) fontReady.then(() => { if (GLOW.name) { paintGlow(GLOW.name); GLOW.shown = GLOW.name; } });
+});
+
 function pose(e) {   // place every part for a global explode time tE (seconds)
   for (const p of S.parts) {
     p.e = e === undefined ? easeOut((S.tE - p.start) / S.dur) : e;
@@ -278,8 +321,11 @@ function scrollKey() {
   const y = scrollY + innerHeight / 2;
   let i = 0; while (i < secs.length - 1 && secs[i + 1].mid <= y) i++;
   const a = secs[i], b = secs[Math.min(i + 1, secs.length - 1)];
-  const t = a === b ? 0 : smooth((y - a.mid) / (b.mid - a.mid));
-  return a.k.map((v, j) => lerp(v, b.k[j], t));   // [az, el, size, x, e, load]
+  const u = a === b ? 0 : clamp01((y - a.mid) / (b.mid - a.mid)), t = smooth(u);
+  const k = a.k.map((v, j) => lerp(v, b.k[j], t));   // [az, el, size, x, e, load]
+  // the laptop comes apart on the way into and out of Work, and sits compact while you read the projects
+  if (a !== b && (a.el.dataset.burst !== undefined || b.el.dataset.burst !== undefined)) k[4] = Math.max(k[4], Math.sin(Math.PI * u) * 0.9);
+  return k;
 }
 let lastScroll = scrollY;
 addEventListener("scroll", () => {      // scrolling eases your own drag back toward the section's framing
@@ -399,7 +445,14 @@ function frame(now) {
   S.load = kload;
 
   updateHover();
-  if (S.autoRotate && !S.paused && !S.dragging && !S.hover && !REDUCED) S.auto += dt * 7;
+  const glowing = !!GLOW.name && GLOW.shown === GLOW.name;
+  GLOW.a += ((glowing ? 1 : 0) - GLOW.a) * (1 - Math.exp(-dt * (glowing ? 7 : 5)));
+  glowMat.opacity = GLOW.a * 0.7 * (0.88 + 0.12 * Math.sin(S.clock * 2.4)) * (1 - Math.min(1, S.tE / S.tTotal * 3));
+  glow.visible = glowMat.opacity > 0.003 && S.pass !== "thermal";
+  if (GLOW.name) {   // ease the turntable back so the screen faces you
+    const home = Math.round(S.auto / 360) * 360, a2 = 1 - Math.exp(-dt * 3);
+    S.auto += (home - S.auto) * a2; S.user.az *= 1 - a2; S.user.el *= 1 - a2;
+  } else if (S.autoRotate && !S.paused && !S.dragging && !S.hover && !REDUCED) S.auto += dt * 7;
 
   // explode: the section's amount, opened fully while you hover (or after a tap on touch)
   const target = (S.hover || S.locked ? 1 : ke) * S.tTotal;
