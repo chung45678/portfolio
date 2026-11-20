@@ -219,14 +219,13 @@ const glowMat = new THREE.MeshBasicMaterial({ map: glowTex, transparent: true, o
 const glow = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), glowMat);
 glow.renderOrder = 5;
 {
-  const n = glassPart.node; root.updateMatrixWorld(true);
-  const inv = n.matrixWorld.clone().invert(), gb = new THREE.Box3(), tb = new THREE.Box3();
-  for (const m of glassPart.meshes) { m.geometry.computeBoundingBox(); tb.copy(m.geometry.boundingBox).applyMatrix4(m.matrixWorld).applyMatrix4(inv); gb.union(tb); }
-  const c = gb.getCenter(new THREE.Vector3()), sz = gb.getSize(new THREE.Vector3());
-  glow.scale.set(sz.x * 0.92, sz.z * 0.9, 1);
+  // the cover glass is a thin slab in its own mesh space (thin along y, front at min y): sit 0.8 mm in front of it
+  const m = glassPart.meshes[0]; m.geometry.computeBoundingBox();
+  const gb = m.geometry.boundingBox, c = gb.getCenter(new THREE.Vector3()), sz = gb.getSize(new THREE.Vector3());
+  glow.scale.set(sz.x * 0.9, sz.z * 0.86, 1);
   glow.rotation.x = Math.PI / 2;                    // plane normal +z → −y (out of the screen)
-  glow.position.set(c.x, gb.min.y - 0.0006, c.z);
-  n.add(glow);
+  glow.position.set(c.x, gb.min.y - 0.0008, c.z);
+  m.add(glow);
 }
 const GLOW = { name: null, shown: null, a: 0 };
 const fontReady = document.fonts?.load("800 120px Archivo").catch(() => {}) ?? Promise.resolve();
@@ -324,7 +323,12 @@ function scrollKey() {
   const u = a === b ? 0 : clamp01((y - a.mid) / (b.mid - a.mid)), t = smooth(u);
   const k = a.k.map((v, j) => lerp(v, b.k[j], t));   // [az, el, size, x, e, load]
   // the laptop comes apart on the way into and out of Work, and sits compact while you read the projects
-  if (a !== b && (a.el.dataset.burst !== undefined || b.el.dataset.burst !== undefined)) k[4] = Math.max(k[4], Math.sin(Math.PI * u) * 0.9);
+  // the burst lives in the half of the gap away from Work, so the laptop is already shut well before Work fills the screen
+  const into = b.el.dataset.burst !== undefined, outOf = a.el.dataset.burst !== undefined;
+  if (a !== b && (into || outOf)) {
+    const w = into ? clamp01(u / 0.5) : clamp01((u - 0.5) / 0.5);   // 0..1 across the burst window
+    k[4] = Math.max(k[4], Math.sin(Math.PI * w) * 0.9);
+  }
   return k;
 }
 let lastScroll = scrollY;
@@ -456,7 +460,7 @@ function frame(now) {
 
   // explode: the section's amount, opened fully while you hover (or after a tap on touch)
   const target = (S.hover || S.locked ? 1 : ke) * S.tTotal;
-  S.tE += Math.sign(target - S.tE) * Math.min(Math.abs(target - S.tE), dt * (REDUCED ? 4 : 1));
+  S.tE += Math.sign(target - S.tE) * Math.min(Math.abs(target - S.tE), dt * (REDUCED ? 4 : S.hover || S.locked ? 1 : 2.2));
   pose();
   let eSum = 0; for (const p of S.parts) { eSum += p.e; p.thermal.uniforms.uT.value = partTemp(p, S.load); }
   const eAvg = eSum / S.parts.length;
