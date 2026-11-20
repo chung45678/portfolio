@@ -152,16 +152,17 @@ function makeGlass() {
   };
   return m;
 }
-// glossy space-black finish for the solid pass (overrides the exported colours by material key)
+// satin space-black finish for the solid pass: [colour, metalness, roughness, clearcoat, clearcoat roughness]
+// bead-blasted metal with a soft sheen, matte keys; only the screen glass stays glossy
 const FINISH = {
-  alu: [0x2c2d31, 1, 0.21, 1], magnesium: [0x1c1d20, 1, 0.3, 0], trackpad: [0x0f1012, 0.3, 0.06, 1],
-  keycap: [0x0b0b0d, 0, 0.42, 0], coverglass: [0x040405, 0, 0.02, 1], panel: [0x060708, 0.2, 0.08, 1],
-  abs: [0x111113, 0, 0.45, 0], fanblack: [0x0d0d0f, 0, 0.4, 0], pcb: [0x0e1012, 0, 0.5, 1],
+  alu: [0x2e2f33, 1, 0.4, 0.3, 0.32], magnesium: [0x1e1f22, 1, 0.46, 0, 0], trackpad: [0x111214, 0.3, 0.3, 0.3, 0.3],
+  keycap: [0x0c0c0e, 0, 0.58, 0, 0], coverglass: [0x040405, 0, 0.05, 1, 0.06], panel: [0x060708, 0.2, 0.12, 1, 0.1],
+  abs: [0x121214, 0, 0.58, 0, 0], fanblack: [0x0e0e10, 0, 0.55, 0, 0], pcb: [0x0e1012, 0, 0.55, 0.2, 0.4],
 };
 function solidMaterial(src) {
   const f = FINISH[src.name];
   if (!f) return src;
-  const m = new THREE.MeshPhysicalMaterial({ color: f[0], metalness: f[1], roughness: f[2], clearcoat: f[3], clearcoatRoughness: 0.04, envMapIntensity: 1.25 });
+  const m = new THREE.MeshPhysicalMaterial({ color: f[0], metalness: f[1], roughness: f[2], clearcoat: f[3], clearcoatRoughness: f[4], envMapIntensity: 1.25 });
   m.name = src.name; return m;
 }
 
@@ -212,6 +213,7 @@ function pose(e) {   // place every part for a global explode time tE (seconds)
   for (const p of S.parts) {
     p.e = e === undefined ? easeOut((S.tE - p.start) / S.dur) : e;
     p.node.position.copy(p.rest).addScaledVector(p.xv, p.e);
+    if (p.jit) p.node.position.x += p.jit;
   }
   if (pivot) pivot.position.copy(pivotRest).addScaledVector(LID_BACK, lidPart.e);
 }
@@ -237,7 +239,6 @@ function setPass(k) {
   for (const p of S.parts) applyPart(p, k);
 }
 // glitch cut between passes: parts flicker between the old and new pass in short random blocks
-const glCanvas = $("gl");
 const GLITCH_DUR = 0.36, CYCLE_EVERY = 10;
 function glitchTo(k) {
   if (REDUCED || k === "thermal" || S.pass === k) { setPass(k); return; }
@@ -245,16 +246,18 @@ function glitchTo(k) {
   setPass(k);
   for (const p of S.parts) applyPart(p, from);
   S.glitch = { from, to: k, t: 0, next: 0 };
-  glCanvas.classList.remove("glitch"); void glCanvas.offsetWidth; glCanvas.classList.add("glitch");
 }
 function stepGlitch(dt) {
   const g = S.glitch; if (!g) return;
   g.t += dt;
-  if (g.t >= GLITCH_DUR) { for (const p of S.parts) applyPart(p, g.to); S.glitch = null; glCanvas.classList.remove("glitch"); return; }
+  if (g.t >= GLITCH_DUR) { for (const p of S.parts) { applyPart(p, g.to); p.jit = 0; } S.glitch = null; return; }
   if (g.t < g.next) return;
   g.next = g.t + 0.03 + Math.random() * 0.05;   // hold each block 1–5 frames
   const bias = g.t / GLITCH_DUR;               // more parts land on the new pass as it goes
-  for (const p of S.parts) applyPart(p, Math.random() < 0.2 + 0.8 * bias ? g.to : g.from);
+  for (const p of S.parts) {
+    applyPart(p, Math.random() < 0.2 + 0.8 * bias ? g.to : g.from);
+    p.jit = Math.random() < 0.35 * (1 - bias) ? (Math.random() * 2 - 1) * 0.022 : 0;   // a few parts slip sideways
+  }
 }
 setPass("solid");
 document.querySelectorAll("[data-pass]").forEach((b) => b.addEventListener("click", () => { S.cycleT = 0; glitchTo(b.dataset.pass); }));
